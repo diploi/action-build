@@ -1,5 +1,8 @@
 name: 'Diploi Builder Action'
 description: 'An action that builds components from a Diploi stack'
+branding:
+  icon: 'package'
+  color: 'purple'
 
 inputs:
   identifier:
