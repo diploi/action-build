@@ -1,5 +1,5 @@
 name: 'Diploi Builder Action'
-description: 'Action Extraordinaire'
+description: 'An action that builds components from a Diploi stack'
 
 inputs:
   identifier:
