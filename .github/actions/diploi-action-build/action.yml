@@ -1,0 +1,55 @@
+name: 'Diploi Builder Action'
+description: 'Action Extraordinaire'
+
+inputs:
+  identifier:
+    description: 'The identifier for the component'
+    required: true
+  folder:
+    description: 'The folder for the component'
+    required: true
+  stage:
+    description: 'Optional prefix to add to the built image tags'
+  registry:
+    description: 'Hostname for the Diploi Docker registry'
+    required: true
+  username:
+    description: 'User for the Diploi Docker registry'
+    required: true
+  password:
+    description: 'Password for the Diploi Docker registry'
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - name: 'Set up QEMU'
+      uses: docker/setup-qemu-action@v3
+
+    - name: 'Set up Docker Buildx'
+      uses: docker/setup-buildx-action@v3
+
+    - name: 'Docker Meta'
+      id: meta
+      uses: docker/metadata-action@v4
+      with:
+        images: ${{ env.registry }}/${{ github.repository }}-${{ inputs.identifier }}
+        flavor: suffix=${{ inputs.stage }}
+
+    - name: 'Log in to the Diploi Container Registry'
+      uses: docker/login-action@v2
+      with:
+        registry: ${{ env.registry }}
+        username: ${{ env.username }}
+        password: ${{ env.password }}
+
+    - name: 'Build And Push'
+      uses: docker/build-push-action@v6
+      with:
+        context: ${{ inputs.folder }}
+        file: ${{ inputs.folder }}/Dockerfile${{ inputs.stage && format('.{0}', inputs.stage) || '' }}
+        pull: true
+        push: ${{ github.event_name != 'pull_request' }}
+        platforms: linux/arm64
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
