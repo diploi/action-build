@@ -11,10 +11,10 @@ inputs:
   folder:
     description: 'The folder for the component'
     required: true
-  dockerfile:
-    description: 'Optional name for the Dockerfile to use'
-  prefix:
-    description: 'Optional prefix to add to the built image tags'
+  name:
+    description: 'Optional name for the build'
+  type:
+    description: 'The type of this build'
   project:
     description: 'Project name for the Diploi Docker registry'
     required: true
@@ -42,7 +42,9 @@ runs:
       uses: docker/metadata-action@v4
       with:
         images: ${{ env.registry }}/${{ env.project }}/${{ inputs.identifier }}
-        tags: ${{ inputs.prefix && 'type=ref,event=branch\ntype=ref,event=branch,prefix=${{ inputs.prefix }}-' || 'type=ref,event=branch' }}
+        tags: |
+          type=ref,event=branch,enable=${{ inputs.type == 'main-dev' || inputs.type == 'main' }}
+          type=ref,event=branch,suffix=-dev.,enable=${{ inputs.type == 'main-dev' || inputs.type == 'dev' }}
 
     - name: 'Log in to the Diploi Container Registry'
       uses: docker/login-action@v2
@@ -55,7 +57,7 @@ runs:
       uses: docker/build-push-action@v6
       with:
         context: ${{ inputs.folder }}
-        file: ${{ inputs.folder }}/${{ inputs.dockerfile || 'Dockerfile' }}
+        file: ${{ inputs.folder }}/${{ inputs.type == 'dev' && 'Dockerfile.dev' || 'Dockerfile' }}
         pull: true
         push: ${{ github.event_name != 'pull_request' }}
         platforms: linux/arm64
