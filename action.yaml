@@ -63,4 +63,4 @@ runs:
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
         build-args: |
-          FOLDER=${{ inputs.folder }}
+          FOLDER=/app/${{ inputs.folder }}
