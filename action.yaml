@@ -56,10 +56,11 @@ runs:
     - name: 'Build And Push'
       uses: docker/build-push-action@v6
       with:
-        context: ${{ inputs.folder }}
         file: ${{ inputs.folder }}/${{ inputs.type == 'dev' && 'Dockerfile.dev' || 'Dockerfile' }}
         pull: true
         push: ${{ github.event_name != 'pull_request' }}
         platforms: linux/arm64
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
+        build-args: |
+          FOLDER=${{ inputs.folder }}
