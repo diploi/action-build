@@ -65,4 +65,3 @@ runs:
         labels: ${{ steps.meta.outputs.labels }}
         build-args: |
           FOLDER=/app/${{ inputs.folder }}
-          IDENTIFIER=${{ inputs.identifier }}
