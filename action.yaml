@@ -17,7 +17,7 @@ inputs:
     description: 'The type of this build'
   project:
     description: 'Project name for the Diploi Docker registry'
-    required: true
+    required: false
   registry:
     description: 'Hostname for the Diploi Docker registry'
     required: true
@@ -39,15 +39,15 @@ runs:
 
     - name: 'Docker Meta'
       id: meta
-      uses: docker/metadata-action@v4
+      uses: docker/metadata-action@v5
       with:
-        images: ${{ env.registry }}/${{ env.project }}/${{ inputs.identifier }}
+        images: ${{ env.registry }}${{ env.project && format('/{0}', env.project) || '' }}/${{ inputs.identifier }}
         tags: |
           type=ref,event=branch,enable=${{ inputs.type == 'main-dev' || inputs.type == 'main' }}
           type=ref,event=branch,suffix=-dev.,enable=${{ inputs.type == 'main-dev' || inputs.type == 'dev' }}
 
     - name: 'Log in to the Diploi Container Registry'
-      uses: docker/login-action@v2
+      uses: docker/login-action@v3
       with:
         registry: ${{ env.registry }}
         username: ${{ env.username }}
