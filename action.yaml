@@ -11,6 +11,9 @@ inputs:
   folder:
     description: 'The folder for the component'
     required: true
+  buildArgs:
+    description: 'Static ENV values to be passed to the Docker build as ARGs'
+    required: true
   name:
     description: 'Optional name for the build'
   type:
@@ -64,4 +67,5 @@ runs:
         tags: ${{ steps.meta.outputs.tags }}
         labels: ${{ steps.meta.outputs.labels }}
         build-args: |
+          ${{ inputs.buildArgs }}
           FOLDER=/app/${{ inputs.folder }}
