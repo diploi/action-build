@@ -7,7 +7,7 @@ branding:
 inputs:
   identifier:
     description: 'The identifier for the component'
-    required: true
+    required: false
   folder:
     description: 'The folder for the component'
     required: true
@@ -44,7 +44,7 @@ runs:
       id: meta
       uses: docker/metadata-action@v5
       with:
-        images: ${{ env.registry }}${{ env.project && format('/{0}', env.project) || '' }}/${{ inputs.identifier }}
+        images: ${{ env.registry }}${{ env.project && format('/{0}', env.project) || '' }}${{ inputs.identifier && format('/{0}', inputs.identifier) || '' }}
         tags: |
           type=ref,event=branch,enable=${{ inputs.type == 'main-dev' || inputs.type == 'main' }}
           type=ref,event=branch,suffix=-dev.,enable=${{ inputs.type == 'main-dev' || inputs.type == 'dev' }}
