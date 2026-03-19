@@ -72,7 +72,7 @@ runs:
             /^\// { print; next }
             index($0, "/") == 0 { print folder "/**/" $0; next }
             { print folder "/" $0 }
-          ' "$folder/.dockerignore" >> .dockerignore
+          ' "$folder/.dockerignore" | { echo; cat; } >> .dockerignore
           echo "Generated .dockerignore:"
           cat .dockerignore
         fi
