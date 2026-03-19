@@ -48,6 +48,8 @@ runs:
         tags: |
           type=ref,event=branch,enable=${{ inputs.type == 'main-dev' || inputs.type == 'main' }}
           type=ref,event=branch,suffix=-dev.,enable=${{ inputs.type == 'main-dev' || inputs.type == 'dev' }}
+          type=ref,event=tag,enable=${{ inputs.type == 'main-dev' || inputs.type == 'main' }}
+          type=ref,event=tag,suffix=-dev.,enable=${{ inputs.type == 'main-dev' || inputs.type == 'dev' }}
 
     - name: 'Log in to the Diploi Container Registry'
       uses: docker/login-action@v3
