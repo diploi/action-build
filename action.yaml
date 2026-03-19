@@ -56,6 +56,27 @@ runs:
         username: ${{ env.username }}
         password: ${{ env.password }}
 
+    - name: 'Set up .dockerignore'
+      shell: bash
+      run: |
+        folder="${{ inputs.folder }}"
+        if [[ -n "$folder" && "$folder" != "." && "$folder" != "/" && -f "$folder/.dockerignore" ]]; then
+          awk -v folder="$folder" '
+            /^#/ || /^$/ { print; next }
+            /^!/ {
+              pattern = substr($0, 2)
+              if (pattern ~ /^\//) { print; next }
+              if (pattern !~ /\//) { print "!" folder "/**/" pattern; next }
+              print "!" folder "/" pattern; next
+            }
+            /^\// { print; next }
+            !~/\// { print folder "/**/" $0; next }
+            { print folder "/" $0 }
+          ' "$folder/.dockerignore" >> .dockerignore
+          echo "Generated .dockerignore:"
+          cat .dockerignore
+        fi
+
     - name: 'Build And Push'
       uses: docker/build-push-action@v6
       with:
