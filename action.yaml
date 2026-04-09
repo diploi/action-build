@@ -92,3 +92,4 @@ runs:
         build-args: |
           ${{ inputs.buildArgs }}
           FOLDER=/app/${{ inputs.folder }}
+        secrets: ${{ env.secrets }}
